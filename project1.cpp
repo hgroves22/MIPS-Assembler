@@ -101,6 +101,21 @@ int main(int argc, char* argv[]) {
         else if (inst_type == "syscall") {
             write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
         }
+        else if(inst_type == "addi"){
+            write_binary(encode_Itype(8,registers[terms[2]],registers[terms[1]],stoi(terms[3])), inst_outfile);
+        }
+        else if(inst_type == "lw"){
+            write_binary(encode_Itype(35,registers[terms[1]],registers[terms[3]],stoi(terms[2])), inst_outfile);
+        }
+        else if(inst_type == "sw"){
+            write_binary(encode_Itype(43,registers[terms[1]],registers[terms[3]],stoi(terms[2])), inst_outfile);
+        }
+        else if(inst_type == "beq"){
+            write_binary(encode_Itype(4,registers[terms[1]],registers[terms[2]],stoi(terms[3])), inst_outfile);
+        }
+        else if(inst_type == "bne"){
+            write_binary(encode_Itype(5,registers[terms[1]],registers[terms[2]],stoi(terms[3])), inst_outfile);
+        }
     }
 }
 

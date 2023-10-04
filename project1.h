@@ -66,6 +66,10 @@ int encode_Rtype(int opcode, int rs, int rt, int rd, int shftamt, int funccode) 
     return (opcode << 26) + (rs << 21) + (rt << 16) + (rd << 11) + (shftamt << 6) + funccode;
 }
 
+int encode_Itype(int opcode, int rs, int rt, int cons){
+    return (opcode << 26) + (rs << 21) + (rt << 16) + cons;
+}
+
 /**
  * Register name map
  */
