@@ -9,6 +9,8 @@
 #include <sstream>
 #include <fstream>
 
+using namespace::std;
+
 /**
  * Helper Functions for String Processing
  */
@@ -67,12 +69,12 @@ int encode_Rtype(int opcode, int rs, int rt, int rd, int shftamt, int funccode) 
 }
 
 int encode_Itype(int opcode, int rs, int rt, int cons){
-    if(cons > pow(2,16)-1 || cons < -pow(2,16)+1)
+    if(cons > pow(2,15)-1 || cons < -pow(2,15)+1)
     {
-        cerr << "Illegal constant value (out of bounds)";
+        cerr << "Illegal constant value (out of bounds)\n";
         return 0;
     } 
-    else
+    else if (cons < 0) rt++;
     return (opcode << 26) + (rs << 21) + (rt << 16) + cons;
 }
 
