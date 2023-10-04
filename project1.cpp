@@ -9,6 +9,8 @@
 #include <sstream>
 #include <fstream>
 
+using namespace std;
+
 int main(int argc, char* argv[]) {
     if (argc < 4) // Checks that at least 3 arguments are given in command line
     {
@@ -82,10 +84,10 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 17), inst_outfile);
         }
         else if (inst_type == "sll") {
-            write_binary(encode_Rtype(0, 0, registers[terms[2]], registers[terms[1]], registers[terms[3]], 00), inst_outfile);
+            write_binary(encode_Rtype(0, 0, registers[terms[2]], registers[terms[1]], stoi(terms[3]), 00), inst_outfile);
         }
         else if (inst_type == "srl") {
-            write_binary(encode_Rtype(0, 0, registers[terms[2]], registers[terms[1]], registers[terms[3]], 02), inst_outfile);
+            write_binary(encode_Rtype(0, 0, registers[terms[2]], registers[terms[1]], stoi(terms[3]), 02), inst_outfile);
         }
         else if (inst_type == "slt") {
             write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 42), inst_outfile);
@@ -94,7 +96,7 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, registers[terms[1]], 0, 0, 0, 8), inst_outfile);
         }
         else if (inst_type == "jalr") {
-            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[1]], 0, 0, 9), inst_outfile);
+            write_binary(encode_Rtype(0, registers[terms[2]], 0, registers[terms[1]], 0, 9), inst_outfile);
         }
         else if (inst_type == "syscall") {
             write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
