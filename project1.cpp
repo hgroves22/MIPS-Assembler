@@ -9,6 +9,8 @@
 #include <sstream>
 #include <fstream>
 
+using namespace std;
+
 int main(int argc, char* argv[]) {
     if (argc < 4) // Checks that at least 3 arguments are given in command line
     {
@@ -61,8 +63,43 @@ int main(int argc, char* argv[]) {
     for(std::string inst : instructions) {
         std::vector<std::string> terms = split(inst, WHITESPACE+",()");
         std::string inst_type = terms[0];
+
+        // Rtype instructions
         if (inst_type == "add") {
-            write_binary(encode_Rtype(0,registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 32),inst_outfile);
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 32), inst_outfile);
+        }
+        else if (inst_type == "sub") {
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 34), inst_outfile);
+        }
+        else if (inst_type == "mult") {
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], 0, 0, 24), inst_outfile);
+        }
+        else if (inst_type == "div") {
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], 0, 0, 26), inst_outfile);
+        }
+        else if (inst_type == "mflo") {
+            write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 18), inst_outfile);
+        }
+        else if (inst_type == "mfhi") {
+            write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 17), inst_outfile);
+        }
+        else if (inst_type == "sll") {
+            write_binary(encode_Rtype(0, 0, registers[terms[2]], registers[terms[1]], stoi(terms[3]), 00), inst_outfile);
+        }
+        else if (inst_type == "srl") {
+            write_binary(encode_Rtype(0, 0, registers[terms[2]], registers[terms[1]], stoi(terms[3]), 02), inst_outfile);
+        }
+        else if (inst_type == "slt") {
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 42), inst_outfile);
+        }
+        else if (inst_type == "jr") {
+            write_binary(encode_Rtype(0, registers[terms[1]], 0, 0, 0, 8), inst_outfile);
+        }
+        else if (inst_type == "jalr") {
+            write_binary(encode_Rtype(0, registers[terms[2]], 0, registers[terms[1]], 0, 9), inst_outfile);
+        }
+        else if (inst_type == "syscall") {
+            write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
         }
     }
 }
