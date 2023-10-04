@@ -91,10 +91,10 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 42), inst_outfile);
         }
         else if (inst_type == "jr") {
-            write_binary(encode_Rtype(0, registers[terms[1]], 0, 0, 0, 08), inst_outfile);
+            write_binary(encode_Rtype(0, registers[terms[1]], 0, 0, 0, 8), inst_outfile);
         }
         else if (inst_type == "jalr") {
-            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[1]], 0, 0, 09), inst_outfile);
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[1]], 0, 0, 9), inst_outfile);
         }
         else if (inst_type == "syscall") {
             write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
