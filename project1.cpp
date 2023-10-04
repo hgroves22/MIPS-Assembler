@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
             std::cerr << "Error: could not open file: " << argv[i] << std::endl;
             exit(1);
         }
-        
+        // test
         std::string str;
         while (getline(infile, str)){ //Read a line from the file
             int lineCounter = 0;
