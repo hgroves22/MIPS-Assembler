@@ -39,17 +39,57 @@ int main(int argc, char* argv[]) {
             std::cerr << "Error: could not open file: " << argv[i] << std::endl;
             exit(1);
         }
-
+        
         std::string str;
         while (getline(infile, str)){ //Read a line from the file
+            int lineCounter = 0;
             str = clean(str); // remove comments, leading and trailing whitespace
             if (str == "") { //Ignore empty lines
                 continue;
             }
+            if(str.find("beq") != string::npos || str.find("bne") != string::npos)
+            {   
+                int labelLineNumber = -1;
+                //find the label:
+                
+                int firstComma = str.find(",");
+                string sub1 = str.substr(firstComma+1, str.length()-firstComma);
+                int secondComma = sub1.find(",");
+                string labelP1 = str.substr(secondComma+2, sub1.length()-secondComma+1);
+                
+                string colon = ":";
+                string label = labelP1 + colon;
+                ifstream infile(argv[i]);
+                int labelLineCounter = 0;
+                string labelLine;
+                bool labelFound = false;
+                while (getline(infile, labelLine) && !labelFound){ 
+                    if(labelLine.find(label) != string::npos)
+                    {
+                        labelLineNumber = labelLineCounter;
+                        labelFound = true;
+                    }
+                    else labelLineCounter++;
+                }
+                if(labelFound==false || labelLineNumber==-1)
+                {
+                    cerr << "Label not found. Please enter a valid label.";
+                    return -1;
+                }
+            int labelOffset = labelLineNumber - lineCounter +1;
+            string lblOffStr = "";
+            lblOffStr = labelOffset;
+            string fixedString = str.substr(0,firstComma+secondComma+1) + lblOffStr;
+            str = fixedString;
+            }
             instructions.push_back(str); // TODO This will need to change for labels
+            lineCounter++;
         }
         infile.close();
     }
+    
+
+
 
     /** Phase 2
      * Process all static memory, output to static memory file
@@ -65,7 +105,7 @@ int main(int argc, char* argv[]) {
         std::string inst_type = terms[0];
 
         // Rtype instructions
-        if (inst_type == "add") {
+        if (inst_type == "add") {   
             write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 32), inst_outfile);
         }
         else if (inst_type == "sub") {
@@ -99,9 +139,10 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, registers[terms[2]], 0, registers[terms[1]], 0, 9), inst_outfile);
         }
         else if (inst_type == "syscall") {
-            write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
+            write_binary(encode_Rtype(0, 0, 0, 26, 0, 12), inst_outfile);
         }
-        else if(inst_type == "addi"){
+        //I-Type instructions
+        else if(inst_type == "addi"){   
             write_binary(encode_Itype(8,registers[terms[2]],registers[terms[1]],stoi(terms[3])), inst_outfile);
         }
         else if(inst_type == "lw"){

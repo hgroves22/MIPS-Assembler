@@ -69,12 +69,12 @@ int encode_Rtype(int opcode, int rs, int rt, int rd, int shftamt, int funccode) 
 }
 
 int encode_Itype(int opcode, int rs, int rt, int cons){
-    if(cons > pow(2,15)-1 || cons < -pow(2,15)+1)
+    if(cons > pow(2,15)-1 || cons < -pow(2,15)+1)           //handle out of bounds exceptions 
     {
         cerr << "Illegal constant value (out of bounds)\n";
         return 0;
     } 
-    else if (cons < 0) rt++;
+    else if (cons < 0) rt++;                                //offset for negative numbers (prevent creep into rt)
     return (opcode << 26) + (rs << 21) + (rt << 16) + cons;
 }
 
