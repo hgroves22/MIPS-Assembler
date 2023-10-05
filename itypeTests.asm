@@ -1,9 +1,9 @@
 .data
 
-testNumber: .word 1500
+testNumber: .word 1500 200 5 
 secondNumber: .word 100
-
-#secondTest: .asciiz "Hello"
+thirdNumber: .word main
+firstWord: .asciiz "Hello"
 
 .text
 .globl main
@@ -29,6 +29,8 @@ main:
     la $t0, testNumber //works
 
     la $t0, secondNumber
+    la $t0, thirdNumber
+    la $t0, firstWord
 
     #need to test
 
@@ -36,6 +38,5 @@ main:
 
     //jal
 
-    sw $t0, 4($t1)
-
-    lw $t0, 12($0)
+    sw $t0, 4($t1) //work
+    lw $t0, 12($0) //work
