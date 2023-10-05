@@ -86,21 +86,29 @@ int main(int argc, char* argv[]) {
                  
                 int colonLocation = str.find(":");
                 string label = str.substr(0,colonLocation);
+                static_labels[label] = static_line;
                 std::vector<std::string> terms = split(str, WHITESPACE+",()");
                 for(int i = 2; i < terms.size(); i++)
                 {
+                    int bin;
                     if(terms[i].find("#") != string::npos)
                     {
                         break;
                     }
-                    static_labels[label] = static_line;             //saves the 'static line' (how many things * 4) to memory w that label
+                    try{
+                        bin = stoi(terms[i]);
+                    }
+                    catch(std::exception& e)
+                    {
+                        bin = labels[terms[i]];
+                    }
+                    //write_binary(,static_outfile);
                     static_line += 4;
-
-                    // Now for writing to static output
                 }
                 
+                
             }       
-            if(str == ".data") pastData = true;          
+            if(str == ".data") pastData = true;         
         }
         infile.close();
     }
