@@ -127,6 +127,15 @@ int main(int argc, char* argv[]) {
             int lab = labels[terms[3]];
             write_binary(encode_Itype(5,registers[terms[1]],registers[terms[2]], lab), inst_outfile);
         }
+        // Jtype Instructions
+        else if(inst_type == "j"){
+            int lab = labels[terms[1]];
+            write_binary(encode_Jtype(2,lab), inst_outfile);
+        }
+        else if(inst_type == "jal"){
+            int lab = labels[terms[3]];
+            write_binary(encode_Jtype(3,lab), inst_outfile);
+        }
     }
 }
 
