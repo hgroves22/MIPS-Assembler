@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
         }
         bool pastText = false;
         std::string str;
-        int lineCounter = 0;
+        int lineCounter = 1;
         while (getline(infile, str)){ //Read a line from the file
             
             str = clean(str); // remove comments, leading and trailing whitespace
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
             instructions.push_back(str); // TODO This will need to change for labels
             if(str == ".text") pastText = true;
             if(pastText && str.find(":") != string::npos){   
-                string label = str.substr(0,str.length()-2);
+                string label = str.substr(0,str.length()-1);
                 labels[label] = lineCounter;
             }       
             lineCounter++;
