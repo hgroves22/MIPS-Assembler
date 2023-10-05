@@ -31,7 +31,9 @@ int main(int argc, char* argv[]) {
      * TODO: Determine the line numbers of all instruction line labels
      * (measured in instructions) starting at 0
     */
-   //comment
+
+    unordered_map<string, int> labels;
+    bool pastText = false;
     //For each input file:
     for (int i = 1; i < argc - 2; i++) {
         std::ifstream infile(argv[i]); //  open the input file for reading
@@ -47,44 +49,15 @@ int main(int argc, char* argv[]) {
             if (str == "") { //Ignore empty lines
                 continue;
             }
-            if(str.find("beq") != string::npos || str.find("bne") != string::npos)
-            {   
-                int labelLineNumber = -1;
-                //find the label:
-                
-                int firstComma = str.find(",");
-                string sub1 = str.substr(firstComma+1, str.length()-firstComma);
-                int secondComma = sub1.find(",");
-                string labelP1 = str.substr(secondComma+2, sub1.length()-secondComma+1);
-                
-                string colon = ":";
-                string label = labelP1 + colon;
-                ifstream infile(argv[i]);
-                int labelLineCounter = 0;
-                string labelLine;
-                bool labelFound = false;
-                while (getline(infile, labelLine) && !labelFound){ 
-                    if(labelLine.find(label) != string::npos)
-                    {
-                        labelLineNumber = labelLineCounter;
-                        labelFound = true;
-                    }
-                    else labelLineCounter++;
-                }
-                if(labelFound==false || labelLineNumber==-1)
-                {
-                    cerr << "Label not found. Please enter a valid label.";
-                    return -1;
-                }
-            int labelOffset = labelLineNumber - lineCounter +1;
-            string lblOffStr = "";
-            lblOffStr = labelOffset;
-            string fixedString = str.substr(0,firstComma+secondComma+1) + lblOffStr;
-            str = fixedString;
-            }
+            if(str == ".text") pastText = true;
+            if(pastText && str.find(":") != string::npos){   
+                string label = str.substr(0,str.length()-2);
+                labels[label] = lineCounter;
+            } 
+            else{            
             instructions.push_back(str); // TODO This will need to change for labels
+            }
             lineCounter++;
-        }
         infile.close();
     }
     
@@ -152,10 +125,12 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Itype(43,registers[terms[1]],registers[terms[3]],stoi(terms[2])), inst_outfile);
         }
         else if(inst_type == "beq"){
-            write_binary(encode_Itype(4,registers[terms[1]],registers[terms[2]],stoi(terms[3])), inst_outfile);
+            int lab = labels[terms[3]];
+            write_binary(encode_Itype(4,registers[terms[1]],registers[terms[2]],lab), inst_outfile);
         }
         else if(inst_type == "bne"){
-            write_binary(encode_Itype(5,registers[terms[1]],registers[terms[2]],stoi(terms[3])), inst_outfile);
+            int lab = labels[terms[3]];
+            write_binary(encode_Itype(5,registers[terms[1]],registers[terms[2]],lab), inst_outfile);
         }
     }
 }
