@@ -59,7 +59,6 @@ int main(int argc, char* argv[]) {
         }
         infile.close();
     }
-
     /** Phase 2
      * Process all static memory, output to static memory file
      * TODO: All of this
@@ -82,8 +81,6 @@ int main(int argc, char* argv[]) {
             if (str == "") { //Ignore empty lines
                 continue;
             }
-            instructions.push_back(str); // TODO This will need to change for labels
-            if(str == ".data") pastData = true;
             if(str == ".text") pastText = true;
             if(pastData && !pastText){   
 
@@ -91,15 +88,16 @@ int main(int argc, char* argv[]) {
                 int colonLocation = str.find(":");
                 string label = str.substr(0,colonLocation);
 
-                string afterFirstSpace = str.substr(str.find(" "), 1+str.length()-str.find(""));
-                string afterSecondSpace = str.substr(afterFirstSpace.find(" ")+1, afterFirstSpace.length()-afterFirstSpace.find(""));               
-
-                static_labels[label] = afterSecondSpace;
+                string afterFirstSpace = str.substr(colonLocation + 1);
+                string afterSecondSpace = afterFirstSpace.substr(afterFirstSpace.find(" ")+1); 
+                string afterThirdSpace = afterSecondSpace.substr(afterSecondSpace.find(" ")+1);              
+                static_labels[label] = afterThirdSpace;
             }       
-            
+            if(str == ".data") pastData = true;
         }
         infile.close();
     }
+
     /** Phase 3
      * Process all instructions, output to instruction memory file
      * TODO: Almost all of this, it only works for adds
@@ -107,6 +105,7 @@ int main(int argc, char* argv[]) {
     for(std::string inst : instructions) {
         std::vector<std::string> terms = split(inst, WHITESPACE+",()");
         std::string inst_type = terms[0];
+
 
         // Rtype instructions
         if (inst_type == "add") {
@@ -174,6 +173,7 @@ int main(int argc, char* argv[]) {
         else if(inst_type == "la")
         {
             string stat_lab_string = static_labels[terms[2]];
+            cout << stat_lab_string << endl;
             int stat_lab = stoi(stat_lab_string);
             write_binary(encode_Itype(8,stat_lab,0,registers[terms[1]]), inst_outfile);
         }

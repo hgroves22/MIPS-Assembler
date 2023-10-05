@@ -1,4 +1,7 @@
-.data 
+.data
+
+testNumber: .word 1500
+
 .text
 .globl main
 main:
@@ -18,3 +21,5 @@ main:
     bne $t0, $t1, secondLabel
 
     label:
+
+    la $t0, testNumber
