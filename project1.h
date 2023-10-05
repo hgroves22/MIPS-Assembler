@@ -72,10 +72,20 @@ int encode_Itype(int opcode, int rs, int rt, int cons){
     if(cons > pow(2,15)-1 || cons < -pow(2,15)+1)           //handle out of bounds exceptions 
     {
         cerr << "Illegal constant value (out of bounds)\n";
-        return 0;
+        return -1;
     } 
     else if (cons < 0) rt++;                                //offset for negative numbers (prevent creep into rt)
     return (opcode << 26) + (rs << 21) + (rt << 16) + cons;
+}
+
+int encode_Jtype(int opcode, int lineNumber)
+{
+    if(lineNumber > pow(2,26)-1 || lineNumber < 0)           //handle out of bounds exceptions 
+    {
+        cerr << "Illegal line number value (out of bounds)\n";
+        return -1;
+    } 
+    return (opcode << 26) + lineNumber;
 }
 
 /**
