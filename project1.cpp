@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
      * Process all static memory, output to static memory file
      * TODO: All of this
      */
-    unordered_map<string, string> static_labels;
+    unordered_map<string, int> static_labels;
     //For each input file:
     for (int i = 1; i < argc - 2; i++) {
         std::ifstream infile(argv[i]); //  open the input file for reading
@@ -74,26 +74,23 @@ int main(int argc, char* argv[]) {
         bool pastText = false;
         bool pastData = false;
         std::string str;
-        
+        int static_line = 0;
         while (getline(infile, str)){ //Read a line from the file
             
             str = clean(str); // remove comments, leading and trailing whitespace
             if (str == "") { //Ignore empty lines
                 continue;
             }
-            if(str == ".text") pastText = true;
+            if(str == ".text") pastText = true; //could be optimized by breaking from loop when text is true (also name change?)
             if(pastData && !pastText){   
-
-                
+                 
                 int colonLocation = str.find(":");
                 string label = str.substr(0,colonLocation);
 
-                string afterFirstSpace = str.substr(colonLocation + 1);
-                string afterSecondSpace = afterFirstSpace.substr(afterFirstSpace.find(" ")+1); 
-                string afterThirdSpace = afterSecondSpace.substr(afterSecondSpace.find(" ")+1);              
-                static_labels[label] = afterThirdSpace;
+                static_labels[label] = static_line;
             }       
             if(str == ".data") pastData = true;
+            static_line += 4;
         }
         infile.close();
     }
@@ -172,11 +169,8 @@ int main(int argc, char* argv[]) {
         }
         //Other
         else if(inst_type == "la")
-        {
-            string stat_lab_string = static_labels[terms[2]];
-            cout << stat_lab_string << endl;
-            int stat_lab = stoi(stat_lab_string);
-            write_binary(encode_Itype(8,0,registers[terms[1]],stat_lab), inst_outfile);
+        {        
+            write_binary(encode_Itype(8,0,registers[terms[1]],static_labels[terms[2]]), inst_outfile);
         }
     }
 }
