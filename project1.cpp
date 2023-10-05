@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     }
     //Prepare output files
     std::ofstream inst_outfile, static_outfile;
-    static_outfile.open(argv[argc - 1], std::ios::binary);
+    static_outfile.open(argv[argc - 2], std::ios::binary);
     inst_outfile.open(argv[argc - 1], std::ios::binary);
     std::vector<std::string> instructions;
 
@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
             exit(1);
         }
         bool pastText = false;
+        //bool pastInstr = false; 
         std::string str;
         int lineCounter = 1;
         while (getline(infile, str)){ //Read a line from the file
@@ -54,8 +55,12 @@ int main(int argc, char* argv[]) {
             if(pastText && str.find(":") != string::npos){   
                 string label = str.substr(0,str.length()-1);
                 labels[label] = lineCounter;
-            }       
-            lineCounter++;
+            }  
+            
+            if(str.find("$") != string::npos || str.find("syscall") != string::npos){   
+                lineCounter++;
+                //pastInstr = true;
+            }
         }
         infile.close();
     }
@@ -102,7 +107,7 @@ int main(int argc, char* argv[]) {
                     {
                         bin = labels[terms[i]];
                     }
-                    //write_binary(,static_outfile);
+                    write_binary(bin,static_outfile);
                     static_line += 4;
                 }
                 
