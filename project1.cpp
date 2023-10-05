@@ -64,7 +64,42 @@ int main(int argc, char* argv[]) {
      * Process all static memory, output to static memory file
      * TODO: All of this
      */
+    unordered_map<string, string> static_labels;
+    //For each input file:
+    for (int i = 1; i < argc - 2; i++) {
+        std::ifstream infile(argv[i]); //  open the input file for reading
+        if (!infile) { // if file can't be opened, need to let the user know
+            std::cerr << "Error: could not open file: " << argv[i] << std::endl;
+            exit(1);
+        }
+        bool pastText = false;
+        bool pastData = false;
+        std::string str;
+        
+        while (getline(infile, str)){ //Read a line from the file
+            
+            str = clean(str); // remove comments, leading and trailing whitespace
+            if (str == "") { //Ignore empty lines
+                continue;
+            }
+            instructions.push_back(str); // TODO This will need to change for labels
+            if(str == ".data") pastData = true;
+            if(str == ".text") pastText = true;
+            if(pastData && !pastText){   
 
+                
+                int colonLocation = str.find(":");
+                string label = str.substr(0,colonLocation);
+
+                string afterFirstSpace = str.substr(str.find(" "), 1+str.length()-str.find(""));
+                string afterSecondSpace = str.substr(afterFirstSpace.find(" ")+1, afterFirstSpace.length()-afterFirstSpace.find(""));               
+
+                static_labels[label] = afterSecondSpace;
+            }       
+            
+        }
+        infile.close();
+    }
     /** Phase 3
      * Process all instructions, output to instruction memory file
      * TODO: Almost all of this, it only works for adds
