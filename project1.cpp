@@ -32,8 +32,7 @@ int main(int argc, char* argv[]) {
      * (measured in instructions) starting at 0
     */
 
-    unordered_map<string, int> labels;
-    bool pastText = false;
+   unordered_map<string, int> labels;
     //For each input file:
     for (int i = 1; i < argc - 2; i++) {
         std::ifstream infile(argv[i]); //  open the input file for reading
@@ -41,28 +40,25 @@ int main(int argc, char* argv[]) {
             std::cerr << "Error: could not open file: " << argv[i] << std::endl;
             exit(1);
         }
-    
+        bool pastText = false;
         std::string str;
+        int lineCounter = 0;
         while (getline(infile, str)){ //Read a line from the file
-            int lineCounter = 0;
+            
             str = clean(str); // remove comments, leading and trailing whitespace
             if (str == "") { //Ignore empty lines
                 continue;
             }
+            instructions.push_back(str); // TODO This will need to change for labels
             if(str == ".text") pastText = true;
             if(pastText && str.find(":") != string::npos){   
                 string label = str.substr(0,str.length()-2);
                 labels[label] = lineCounter;
-            } 
-            else{            
-            instructions.push_back(str); // TODO This will need to change for labels
-            }
+            }       
             lineCounter++;
+        }
         infile.close();
     }
-    
-
-
 
     /** Phase 2
      * Process all static memory, output to static memory file
@@ -78,7 +74,7 @@ int main(int argc, char* argv[]) {
         std::string inst_type = terms[0];
 
         // Rtype instructions
-        if (inst_type == "add") {   
+        if (inst_type == "add") {
             write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 32), inst_outfile);
         }
         else if (inst_type == "sub") {
@@ -112,10 +108,9 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, registers[terms[2]], 0, registers[terms[1]], 0, 9), inst_outfile);
         }
         else if (inst_type == "syscall") {
-            write_binary(encode_Rtype(0, 0, 0, 26, 0, 12), inst_outfile);
+            write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
         }
-        //I-Type instructions
-        else if(inst_type == "addi"){   
+        else if(inst_type == "addi"){
             write_binary(encode_Itype(8,registers[terms[2]],registers[terms[1]],stoi(terms[3])), inst_outfile);
         }
         else if(inst_type == "lw"){
@@ -126,11 +121,11 @@ int main(int argc, char* argv[]) {
         }
         else if(inst_type == "beq"){
             int lab = labels[terms[3]];
-            write_binary(encode_Itype(4,registers[terms[1]],registers[terms[2]],lab), inst_outfile);
+            write_binary(encode_Itype(4,registers[terms[1]],registers[terms[2]], lab), inst_outfile);
         }
         else if(inst_type == "bne"){
             int lab = labels[terms[3]];
-            write_binary(encode_Itype(5,registers[terms[1]],registers[terms[2]],lab), inst_outfile);
+            write_binary(encode_Itype(5,registers[terms[1]],registers[terms[2]], lab), inst_outfile);
         }
     }
 }
