@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
                 static_labels[label] = static_line;
             }       
             if(str == ".data") pastData = true;
-            static_line += 4;
+            else static_line += 4;
         }
         infile.close();
     }

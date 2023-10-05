@@ -1,6 +1,8 @@
 .data
 
 testNumber: .word 1500
+secondNumber: .word 100
+
 #secondTest: .asciiz "Hello"
 
 .text
@@ -26,7 +28,7 @@ main:
     addi $t0, $0, 1500 //works
     la $t0, testNumber //works
 
-    la $t0, secondTest
+    la $t0, secondNumber
 
     #need to test
 
@@ -34,6 +36,6 @@ main:
 
     //jal
 
-    //sw
+    sw $t0, 4($t1)
 
-    //lw
+    lw $t0, 12($0)

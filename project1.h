@@ -37,10 +37,12 @@ std::vector<std::string> split(const std::string &s, const std::string &split_on
     while(cur_pos >= 0) {
         int new_pos = s.find_first_not_of(split_on, cur_pos);
         cur_pos = s.find_first_of(split_on, new_pos);
+        if(new_pos == -1 && cur_pos == -1) break; //This line is new
         split_terms.push_back(s.substr(new_pos,cur_pos-new_pos));
     }
     return split_terms;
 }
+
 
 //Remove all comments and leading/trailing whitespace
 std::string clean(const std::string &s)
