@@ -170,12 +170,13 @@ int main(int argc, char* argv[]) {
             int lab = labels[terms[3]];
             write_binary(encode_Jtype(3,lab), inst_outfile);
         }
+        //Other
         else if(inst_type == "la")
         {
             string stat_lab_string = static_labels[terms[2]];
             cout << stat_lab_string << endl;
             int stat_lab = stoi(stat_lab_string);
-            write_binary(encode_Itype(8,stat_lab,0,registers[terms[1]]), inst_outfile);
+            write_binary(encode_Itype(8,0,registers[terms[1]],stat_lab), inst_outfile);
         }
     }
 }
