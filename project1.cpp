@@ -159,7 +159,7 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, registers[terms[1]], 0, 0, 0, 8), inst_outfile);
         }
         else if (inst_type == "jalr") {
-            write_binary(encode_Rtype(0, registers[terms[2]], 0, registers[terms[1]], 0, 9), inst_outfile);
+            write_binary(encode_Rtype(0, registers[terms[1]], 0, 31, 0, 9), inst_outfile);
         }
         else if (inst_type == "syscall") {
             write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
@@ -187,7 +187,7 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Jtype(2,lab), inst_outfile);
         }
         else if(inst_type == "jal"){
-            int lab = labels[terms[3]];
+            int lab = labels[terms[1]];
             write_binary(encode_Jtype(3,lab), inst_outfile);
         }
         //Other

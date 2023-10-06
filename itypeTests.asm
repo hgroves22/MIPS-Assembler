@@ -34,9 +34,9 @@ main:
 
     #need to test
 
-    //j
+    j main
 
-    //jal
+    jal main
 
     sw $t0, 4($t1) //work
     lw $t0, 12($0) //work
