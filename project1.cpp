@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
                  
                 int colonLocation = str.find(":");
                 string label = str.substr(0,colonLocation);
-                static_labels[label] = static_line;
+                static_labels[label] = static_line;             //come back to this
                 std::vector<std::string> terms = split(str, WHITESPACE+",()");
                 for(int i = 2; i < terms.size(); i++)
                 {
@@ -105,7 +105,8 @@ int main(int argc, char* argv[]) {
                     }
                     catch(std::exception& e)
                     {
-                        bin = labels[terms[i]];
+                        bin = labels[terms[i]]; //MULTIPLY THIS BY FOUR & REMEMBER STARTS AT 0, NOT ONE!!!!!!!!!!!!!!!
+                                                // should probbaly also save this into static labels right? 
                     }
                     write_binary(bin,static_outfile);
                     static_line += 4;
