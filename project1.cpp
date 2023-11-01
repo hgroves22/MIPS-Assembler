@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
         bool pastText = false;
         //bool pastInstr = false; 
         std::string str;
-        int lineCounter = 1;
+        int lineCounter = 0;
         while (getline(infile, str)){ //Read a line from the file
             
             str = clean(str); // remove comments, leading and trailing whitespace
@@ -91,24 +91,44 @@ int main(int argc, char* argv[]) {
                  
                 int colonLocation = str.find(":");
                 string label = str.substr(0,colonLocation);
-                static_labels[label] = static_line;             //come back to this
+                static_labels[label] = static_line;             
                 std::vector<std::string> terms = split(str, WHITESPACE+",()");
                 for(int i = 2; i < terms.size(); i++)
                 {
-                    int bin;
-                    if(terms[i].find("#") != string::npos)
+                    if(terms[1] == ".word")
                     {
-                        break;
+                        int bin;
+                        if(terms[i].find("#") != string::npos)
+                        {
+                            break;
+                        }
+                        try{
+                            bin = stoi(terms[i]);
+                        }
+                        catch(std::exception& e)
+                        {
+                            if(labels.count(terms[i]) == 1)
+                            bin = 4*labels[terms[i]]; 
+                            else
+                            bin = static_labels[terms[i]];
+                            
+                        }
+                        write_binary(bin,static_outfile);
+                        
                     }
-                    try{
-                        bin = stoi(terms[i]);
-                    }
-                    catch(std::exception& e)
+                    else if(terms[1] == ".asciiz")
                     {
-                        bin = labels[terms[i]]; //MULTIPLY THIS BY FOUR & REMEMBER STARTS AT 0, NOT ONE!!!!!!!!!!!!!!!
-                                                // should probbaly also save this into static labels right? 
+                        int bin = 0;
+                        for(char c : terms[i])
+                        {
+                            if(c == '\"') continue;
+                            write_binary(((int) c), static_outfile);
+                        }
+                        char c = '\0';
+                        write_binary(((int) c), static_outfile);
+                        
+                       
                     }
-                    write_binary(bin,static_outfile);
                     static_line += 4;
                 }
                 
