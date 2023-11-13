@@ -185,6 +185,8 @@ int main(int argc, char* argv[]) {
         else if (inst_type == "syscall") {
             write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
         }
+
+        // Itype instructions
         else if(inst_type == "addi"){
             write_binary(encode_Itype(8,registers[terms[2]],registers[terms[1]],stoi(terms[3])), inst_outfile);
         }
@@ -202,6 +204,42 @@ int main(int argc, char* argv[]) {
             int lab = labels[terms[3]];
             write_binary(encode_Itype(5,registers[terms[1]],registers[terms[2]], lab), inst_outfile);
         }
+
+        // extra credit
+        else if(inst_type == "mov"){
+            write_binary(encode_Itype(8,registers[terms[2]],registers[terms[1]],0), inst_outfile);
+        }
+        else if(inst_type == "li"){
+            write_binary(encode_Itype(8,registers["$0"],registers[terms[1]],stoi(terms[2])), inst_outfile);
+        }
+        else if (inst_type == "blt") {
+            write_binary(encode_Rtype(0, registers[terms[1]], registers[terms[2]], registers["$at"], 0, 42), inst_outfile); //slt
+            int lab = labels[terms[3]];
+            write_binary(encode_Itype(5,registers["$at"],registers["$0"], lab), inst_outfile); //bne
+        }
+        else if (inst_type == "ble") {
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[1]], registers["$at"], 0, 42), inst_outfile); //slt
+            int lab = labels[terms[3]];
+            write_binary(encode_Itype(4,registers["$at"],registers["$0"], lab), inst_outfile); //beq
+        }
+        else if (inst_type == "bgt") {
+            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[1]], registers["$at"], 0, 42), inst_outfile); //slt
+            int lab = labels[terms[3]];
+            write_binary(encode_Itype(5,registers["$at"],registers["$0"], lab), inst_outfile); //bne
+        }
+        else if (inst_type == "bge") {
+            write_binary(encode_Rtype(0, registers[terms[1]], registers[terms[2]], registers["$at"], 0, 42), inst_outfile); //slt
+            int lab = labels[terms[3]];
+            write_binary(encode_Itype(4,registers["$at"],registers["$0"], lab), inst_outfile); //beq
+        }
+        else if(inst_type == "abs") {
+            write_binary(encode_Rtype(0, registers[terms[1]], registers["$0"], registers["$at"], 0, 42), inst_outfile); 
+            write_binary(encode_Itype(4,registers["$at"],registers["$0"], 12), inst_outfile); //branch if rs >= 0 
+            write_binary(encode_Itype(8,registers["$0"],registers["$at"],-1), inst_outfile); //addi -1
+            write_binary(encode_Rtype(0, registers["$at"], registers[terms[1]], 0, 0, 24), inst_outfile); //mult
+            write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 18), inst_outfile); //mflo
+        }
+
         // Jtype Instructions
         else if(inst_type == "j"){
             int lab = labels[terms[1]];
@@ -211,6 +249,7 @@ int main(int argc, char* argv[]) {
             int lab = labels[terms[1]];
             write_binary(encode_Jtype(3,lab), inst_outfile);
         }
+
         //Other
         else if(inst_type == "la")
         {        
