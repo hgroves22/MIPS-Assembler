@@ -28,6 +28,13 @@ _syscall0:
     # Initialization goes here
     addi $sp, $0, -4096  #Initialize stack pointer
     # Set up heap_pointer
+    la $k1, _END_OF_STATIC_MEMORY_
+    addi $sp, $sp, 4 # allocate memory to store $t0
+    sw $t0, 0($sp) #store $t0
+    la $t0, heap_pointer #get the address of the heap pointer
+    sw $k1, 0($t0) #load the heap pointer into static memory
+    lw $t0, 0($sp) #load back $t0
+    addi $sp, $sp, 4 # deallocate memory
     j _syscallEnd_
 
 #Print Integer
@@ -40,7 +47,6 @@ _syscall1:
 #Read Integer
 _syscall5:
     lw $t0, -240($0)
-
     # Read Integer code goes here
     jr $k0
 
@@ -58,13 +64,14 @@ _syscall11:
     # read character code goes here
     elevenLoop:
         lw $v0, -240($0)
-        beq $v0, $0, elevenLoop
+        beq $v0, $0, elevenLoop #loop until key is pressed
         lw $v0, -236($0)
         jr $k0
 
 #print character
 _syscall12:
-    # print character code goes here
+    # print character code goes here $a0
+    sw $a0, -256($0)
     jr $k0
 
 ##extra credit syscalls go here?
