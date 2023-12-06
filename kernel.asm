@@ -45,13 +45,43 @@ _syscall1:
 
 #Read Integer
 _syscall5:
-    lw $t0, -240($0)
     # Read Integer code goes here
-    jr $k0
+    addi $sp, $sp, -12
+    sw $t0, 0($sp)
+    sw $t1, 4($sp)
+    sw $t2, 8($sp)
+
+    addi $t0, $0, 0
+    addi $t1, $0, 0
+    addi $t2, $0, 0
+
+    fiveLoop:
+        lw $t0, -236($0)
+        addi $t1, $0, 58 #is $t0 < 58
+        slt $t1, $t0, $t1
+        beq $t1, $0, fiveEnd
+        addi $t1, $0, 47
+        slt $t1, $t1, $t0 #is 47 < $t0
+        beq $t1, $0, fiveEnd
+        addi $t0, $t0, -48
+        addi $t2, $t2, $t0
+        sw $0, -240($0)
+        j fiveLoop:
+        
+    fiveEnd:
+        lw $t0, 0($sp)
+        lw $t1, 4($sp)
+        lw $t2, 8($sp)
+        addi $sp, $sp, 12
+        sw $0, -240($0)
+        jr $k0
 
 #Heap allocation
 _syscall9:
     # Heap allocation code goes here
+    la $v0, heap_pointer
+    lw $v0, 0($t0)
+    add $v0, $v0, $a0
     jr $k0
 
 #"End" the program
@@ -62,9 +92,10 @@ _syscall10:
 _syscall11:
     # read character code goes here
     elevenLoop:
-        lw $v0, -240($0)
+        lw $v0, -240($0) # keyboard ready
         beq $v0, $0, elevenLoop #loop until key is pressed
-        lw $v0, -236($0)
+        lw $v0, -236($0) #read keyboard character
+        sw $0, -240($0) # sets keyboard ready to 0 to get next character
         jr $k0
 
 #print character
