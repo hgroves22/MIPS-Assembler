@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
                 labels[label] = lineCounter;
             }  
             
-            if(str.find("$") != string::npos || str.find("syscall") != string::npos){   
+            if(str.find("$") != string::npos || (str.find("syscall") != string::npos && str.find(":")==string::npos) || (str.find("j")==0 && str.find(":")==string::npos)){   
                 lineCounter++;
                 //pastInstr = true;
             }
@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 18), inst_outfile);
         }
         else if (inst_type == "mfhi") {
-            write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 17), inst_outfile);
+            write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 16), inst_outfile);
         }
         else if (inst_type == "sll") {
             write_binary(encode_Rtype(0, 0, registers[terms[2]], registers[terms[1]], stoi(terms[3]), 00), inst_outfile);
