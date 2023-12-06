@@ -38,10 +38,9 @@ _syscall0:
     j _syscallEnd_
 
 #Print Integer
-_syscall1:
-    # single digits first then go to multiple (same for read)
-    # ascii from keyboard  figure how to turn it into an integer    
+_syscall1: 
     # Print Integer code goes here
+    sw $a0, -256($0)
     jr $k0
 
 #Read Integer
