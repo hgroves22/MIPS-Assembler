@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
         bool pastData = false;
         std::string str;
         int static_line = 0;
+        int num_of_writes = 0;
         while (getline(infile, str)){ //Read a line from the file
             
             str = clean(str); // remove comments, leading and trailing whitespace
@@ -114,6 +115,7 @@ int main(int argc, char* argv[]) {
                             
                         }
                         write_binary(bin,static_outfile);
+                        num_of_writes++;
                         
                     }
                     else if(terms[1] == ".asciiz")
@@ -123,21 +125,24 @@ int main(int argc, char* argv[]) {
                         {
                             if(c == '\"') continue;
                             write_binary(((int) c), static_outfile);
+                            num_of_writes++;
                         }
                         char c = '\0';
                         write_binary(((int) c), static_outfile);
+                        num_of_writes++;
                         
                        
                     }
                     static_line += 4;
                 }
-                
-                
             }       
             if(str == ".data") pastData = true;         
         }
+        static_labels["_END_OF_STATIC_MEMORY_"] = 4* num_of_writes;
+        write_binary(4 * num_of_writes,static_outfile);
         infile.close();
     }
+     
 
     /** Phase 3
      * Process all instructions, output to instruction memory file
