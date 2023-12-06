@@ -65,9 +65,9 @@ _syscall5:
         beq $t1, $0, fiveEnd
         addi $t0, $t0, -48
         addi $t2, $t2, $t0
-        sw $0, -240($0)
+        sw $0, -240($0) #set keyboard ready to 0 to get next character
         j fiveLoop:
-        
+
     fiveEnd:
         lw $t0, 0($sp)
         lw $t1, 4($sp)
