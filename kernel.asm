@@ -3,7 +3,7 @@
 #program will conflict
 
 .data
-heap_pointer: .word 0 #TODO: Where should heap start?  OS/Kernel+ Static
+heap_pointer: .word 64 #TODO: Where should heap start?  OS/Kernel+ Static
 
 .text
 _syscallStart_:
@@ -29,7 +29,7 @@ _syscall0:
     addi $sp, $0, -4096  #Initialize stack pointer
     # Set up heap_pointer
     la $k1, _END_OF_STATIC_MEMORY_
-    addi $sp, $sp, 4 # allocate memory to store $t0
+    addi $sp, $sp, -4 # allocate memory to store $t0
     sw $t0, 0($sp) #store $t0
     la $t0, heap_pointer #get the address of the heap pointer
     sw $k1, 0($t0) #load the heap pointer into static memory
@@ -64,7 +64,7 @@ _syscall5:
         slt $t1, $t1, $t0 #is 47 < $t0
         beq $t1, $0, fiveEnd
         addi $t0, $t0, -48
-        addi $t2, $t2, $t0
+        add $t2, $t2, $t0
         sw $0, -240($0) #set keyboard ready to 0 to get next character
         j fiveLoop:
 
