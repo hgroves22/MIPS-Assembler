@@ -41,8 +41,22 @@ _syscall0:
 _syscall1: 
     # Print Integer code goes here
     # pretty sure you gotta take the int off the keyboard first and put it on bus - brett
-    sw $a0, -256($0)
-    jr $k0
+    oneLoop:
+        addi $v0, $sp, 0
+        addi $k1, $0, 10
+        div $a0, $k1
+        mfhi $k1
+        mflo $a0
+        addi $sp, $sp, -4
+        sw $k1, 0($sp)
+        beq $a0, 0, oneEnd
+    oneEnd:
+        lw $k1, 0($sp)
+        sw $k1, -256($0)
+        addi $sp, $sp, 4
+        beq $sp, $v0, realOneEnd
+    realOneEnd:
+        jr $k0
 
 #Read Integer
 _syscall5:
@@ -65,6 +79,9 @@ _syscall5:
         slt $t1, $t1, $t0 #is 47 < $t0
         beq $t1, $0, fiveEnd
         addi $t0, $t0, -48
+        addi $t1, $0, 10
+        mult $t2, $t1
+        mflo $t2
         add $t2, $t2, $t0
         sw $0, -240($0) #set keyboard ready to 0 to get next character
         j fiveLoop
@@ -81,7 +98,7 @@ _syscall5:
 _syscall9:
     # Heap allocation code goes here
     la $v0, heap_pointer
-    lw $v0, 0($t0)
+    lw $v0, 0($v0)
     add $v0, $v0, $a0
     jr $k0
 
