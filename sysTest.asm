@@ -7,4 +7,5 @@ numLabel: .word 1 2 3
 .globl main
 main:
     addi $v0, $0, 1
+    addi $a0, $0, 100
     syscall

@@ -29,18 +29,17 @@ _syscall0:
     addi $sp, $0, -4096  #Initialize stack pointer
     # Set up heap_pointer
     la $k1, _END_OF_STATIC_MEMORY_
-    addi $sp, $sp, -4 # allocate memory to store $t0
-    sw $t0, 0($sp) #store $t0
-    la $t0, heap_pointer #get the address of the heap pointer
-    sw $k1, 0($t0) #load the heap pointer into static memory
-    lw $t0, 0($sp) #load back $t0
-    addi $sp, $sp, 4 # deallocate memory
+    #addi $sp, $sp, -4 # allocate memory to store $t0
+    #sw $t0, 0($sp) #store $t0
+    la $v0, heap_pointer #get the address of the heap pointer
+    sw $k1, 0($v0) #load the heap pointer into static memory
+    #lw $t0, 0($sp) #load back $t0
+    #addi $sp, $sp, 4 # deallocate memory
     j _syscallEnd_
 
 #Print Integer
 _syscall1: 
     # Print Integer code goes here
-    # pretty sure you gotta take the int off the keyboard first and put it on bus - brett
     sw $a0, -256($0)
     jr $k0
 
@@ -81,7 +80,7 @@ _syscall5:
 _syscall9:
     # Heap allocation code goes here
     la $v0, heap_pointer
-    lw $v0, 0($t0)
+    lw $v0, 0($v0)
     add $v0, $v0, $a0
     jr $k0
 
