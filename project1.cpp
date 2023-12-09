@@ -93,7 +93,9 @@ int main(int argc, char* argv[]) {
                  
                 int colonLocation = str.find(":");
                 string label = str.substr(0,colonLocation);
-                static_labels[label] = static_line;             
+                //static_labels[label] = static_line;  
+
+                bool first = false;       
                 std::vector<std::string> terms = split(str, WHITESPACE+",()");
                 for(int i = 2; i < terms.size(); i++)
                 {
@@ -106,6 +108,11 @@ int main(int argc, char* argv[]) {
                         }
                         try{
                             bin = stoi(terms[i]);
+                            if(!first)
+                            {
+                                static_labels[label] = stoi(terms[i]);
+                                first = true;
+                            }
                         }
                         catch(std::exception& e)
                         {
@@ -113,6 +120,11 @@ int main(int argc, char* argv[]) {
                             bin = 4*labels[terms[i]]; 
                             else
                             bin = static_labels[terms[i]];
+                            if(!first)
+                            {
+                                static_labels[label] = stoi(terms[i]);
+                                first = true;
+                            }
                             
                         }
                         write_binary(bin,static_outfile);
@@ -161,10 +173,10 @@ int main(int argc, char* argv[]) {
             write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], registers[terms[1]], 0, 34), inst_outfile);
         }
         else if (inst_type == "mult") {
-            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], 0, 0, 24), inst_outfile);
+            write_binary(encode_Rtype(0, registers[terms[1]], registers[terms[2]], 0, 0, 24), inst_outfile);
         }
         else if (inst_type == "div") {
-            write_binary(encode_Rtype(0, registers[terms[2]], registers[terms[3]], 0, 0, 26), inst_outfile);
+            write_binary(encode_Rtype(0, registers[terms[1]], registers[terms[2]], 0, 0, 26), inst_outfile);
         }
         else if (inst_type == "mflo") {
             write_binary(encode_Rtype(0, 0, 0, registers[terms[1]], 0, 18), inst_outfile);
@@ -187,9 +199,9 @@ int main(int argc, char* argv[]) {
         else if (inst_type == "jalr") {
             write_binary(encode_Rtype(0, registers[terms[1]], 0, 31, 0, 9), inst_outfile);
         }
-        else if (inst_type == "syscall") {
-            write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
-        }
+        //else if (inst_type == "syscall") {
+            //write_binary(encode_Rtype(0, 0, 0, 0, 0, 12), inst_outfile);
+        //}
 
         // Itype instructions
         else if(inst_type == "addi"){
@@ -248,6 +260,10 @@ int main(int argc, char* argv[]) {
         // Jtype Instructions
         else if(inst_type == "j"){
             int lab = labels[terms[1]];
+            write_binary(encode_Jtype(2,lab), inst_outfile);
+        }
+        else if(inst_type == "syscall"){
+            int lab = 0;
             write_binary(encode_Jtype(2,lab), inst_outfile);
         }
         else if(inst_type == "jal"){

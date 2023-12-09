@@ -3,7 +3,7 @@
 #program will conflict
 
 .data
-heap_pointer: .word 64 #TODO: Where should heap start?  OS/Kernel+ Static
+heap_pointer: .word 64 24 #TODO: Where should heap start?  OS/Kernel+ Static
 
 .text
 _syscallStart_:
@@ -40,6 +40,7 @@ _syscall0:
 #Print Integer
 _syscall1: 
     # Print Integer code goes here
+    # pretty sure you gotta take the int off the keyboard first and put it on bus - brett
     sw $a0, -256($0)
     jr $k0
 
@@ -66,7 +67,7 @@ _syscall5:
         addi $t0, $t0, -48
         add $t2, $t2, $t0
         sw $0, -240($0) #set keyboard ready to 0 to get next character
-        j fiveLoop:
+        j fiveLoop
 
     fiveEnd:
         lw $t0, 0($sp)
@@ -105,5 +106,6 @@ _syscall12:
     jr $k0
 
 ##extra credit syscalls go here?
-
+addi $t0, $0, 9
 _syscallEnd_:
+addi $0, $0, 0
