@@ -4,7 +4,6 @@
 main:
     addi $t0, $0, 15
     addi $t1, $0, 16
-    beq $t0, $t1, endLoop
     j firstJump
     addi $t0, $0, 15
     addi $t0, $0, 15
@@ -13,5 +12,9 @@ main:
     addi $t0, $0, 15
 firstJump:
     addi $t0, $0, 16
-    jal main
+    jal secondJump
+    addi $t0, $0, 100
+    j endLoop
+secondJump:
+    jr $ra
 endLoop:
