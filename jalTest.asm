@@ -14,7 +14,9 @@ firstJump:
     addi $t0, $0, 16
     jal secondJump
     addi $t0, $0, 100
+    jr $ra
     j endLoop
 secondJump:
-    jr $ra
+    jalr $ra
+    addi $t0, $0, 105
 endLoop:
