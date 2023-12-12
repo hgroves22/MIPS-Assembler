@@ -3,7 +3,7 @@
 #program will conflict
 
 .data
-heap_pointer: .word 64 24 #TODO: Where should heap start?  OS/Kernel+ Static
+heap_pointer: .word 0 #TODO: Where should heap start?  OS/Kernel+ Static
 
 .text
 _syscallStart_:
@@ -29,34 +29,33 @@ _syscall0:
     addi $sp, $0, -4096  #Initialize stack pointer
     # Set up heap_pointer
     la $k1, _END_OF_STATIC_MEMORY_
-    #addi $sp, $sp, -4 # allocate memory to store $t0
-    #sw $t0, 0($sp) #store $t0
     la $v0, heap_pointer #get the address of the heap pointer
     sw $k1, 0($v0) #load the heap pointer into static memory
-    #lw $t0, 0($sp) #load back $t0
-    #addi $sp, $sp, 4 # deallocate memory
     j _syscallEnd_
 
 #Print Integer
 _syscall1: 
     # Print Integer code goes here
     # pretty sure you gotta take the int off the keyboard first and put it on bus - brett
+    addi $v0, $sp, 0
     oneLoop:
-        addi $v0, $sp, 0
         addi $k1, $0, 10
         div $a0, $k1
         mfhi $k1
         mflo $a0
         addi $sp, $sp, -4
         sw $k1, 0($sp)
-        beq $a0, 0, oneEnd
+        beq $a0, $0, oneEnd
+        j oneLoop
     oneEnd:
         lw $k1, 0($sp)
+        addi $k1, $k1, 48
         sw $k1, -256($0)
         addi $sp, $sp, 4
         beq $sp, $v0, realOneEnd
+        j oneEnd
     realOneEnd:
-        jr $k0
+        jr $ra
 
 #Read Integer
 _syscall5:
@@ -79,7 +78,7 @@ _syscall5:
         slt $t1, $t1, $t0 #is 47 < $t0
         beq $t1, $0, fiveEnd
         addi $t0, $t0, -48
-        addi $t1, $0, 10
+        addi $t1, $0, 10    
         mult $t2, $t1
         mflo $t2
         add $t2, $t2, $t0
@@ -89,18 +88,21 @@ _syscall5:
     fiveEnd:
         lw $t0, 0($sp)
         lw $t1, 4($sp)
+        addi $v0, $t2, 0
         lw $t2, 8($sp)
         addi $sp, $sp, 12
         sw $0, -240($0)
-        jr $k0
+        jr $ra
 
 #Heap allocation
 _syscall9:
     # Heap allocation code goes here
-    la $v0, heap_pointer
-    lw $v0, 0($v0)
+    la $k1, heap_pointer
+    lw $v0, 0($k1)
     add $v0, $v0, $a0
-    jr $k0
+    sw $v0, 0($k1)
+
+    jr $ra
 
 #"End" the program
 _syscall10:
@@ -114,15 +116,13 @@ _syscall11:
         beq $v0, $0, elevenLoop #loop until key is pressed
         lw $v0, -236($0) #read keyboard character
         sw $0, -240($0) # sets keyboard ready to 0 to get next character
-        jr $k0
+        jr $ra
 
 #print character
 _syscall12:
     # print character code goes here $a0
     sw $a0, -256($0)
-    jr $k0
+    jr $ra
 
 ##extra credit syscalls go here?
-addi $t0, $0, 9
 _syscallEnd_:
-addi $0, $0, 0

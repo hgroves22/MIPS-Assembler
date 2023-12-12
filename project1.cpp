@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
     */
 
    unordered_map<string, int> labels;
+   int lineCounter = 0;
     //For each input file:
     for (int i = 1; i < argc - 2; i++) {
         std::ifstream infile(argv[i]); //  open the input file for reading
@@ -43,7 +44,7 @@ int main(int argc, char* argv[]) {
         bool pastText = false;
         //bool pastInstr = false; 
         std::string str;
-        int lineCounter = 0;
+        
         while (getline(infile, str)){ //Read a line from the file
             
             str = clean(str); // remove comments, leading and trailing whitespace
@@ -69,7 +70,10 @@ int main(int argc, char* argv[]) {
      * TODO: All of this
      */
     unordered_map<string, int> static_labels;
+    int static_line = 0;
     int num_of_writes = 0;
+    bool lastWasAscii = false;
+    int lastLength = 0;
     //For each input file:
     for (int i = 1; i < argc - 2; i++) {
         std::ifstream infile(argv[i]); //  open the input file for reading
@@ -80,7 +84,7 @@ int main(int argc, char* argv[]) {
         bool pastText = false;
         bool pastData = false;
         std::string str;
-        int static_line = 0;
+        
         
         while (getline(infile, str)){ //Read a line from the file
             
@@ -93,10 +97,11 @@ int main(int argc, char* argv[]) {
                  
                 int colonLocation = str.find(":");
                 string label = str.substr(0,colonLocation);
-                //static_labels[label] = static_line;  
-
+                static_labels[label] = static_line;  
+                //write_binary(static_line,static_outfile);
                 bool first = false;       
                 std::vector<std::string> terms = split(str, WHITESPACE+",()");
+                //static_line += 4;
                 for(int i = 2; i < terms.size(); i++)
                 {
                     if(terms[1] == ".word")
@@ -110,7 +115,7 @@ int main(int argc, char* argv[]) {
                             bin = stoi(terms[i]);
                             if(!first)
                             {
-                                static_labels[label] = stoi(terms[i]);
+                                //static_labels[label] = stoi(terms[i]);
                                 first = true;
                             }
                         }
@@ -122,7 +127,7 @@ int main(int argc, char* argv[]) {
                             bin = static_labels[terms[i]];
                             if(!first)
                             {
-                                static_labels[label] = stoi(terms[i]);
+                                //static_labels[label] = stoi(terms[i]);
                                 first = true;
                             }
                             
@@ -142,9 +147,20 @@ int main(int argc, char* argv[]) {
                         }
                         char c = '\0';
                         write_binary(((int) c), static_outfile);
-                        num_of_writes++;                       
+                        num_of_writes++;  
+                        lastWasAscii = true;
+                        lastLength += terms[i].length()+1;
                     }
-                    static_line += 4;
+                    if(lastWasAscii)
+                    {
+                        static_line += lastLength*4;
+                        lastWasAscii = false;
+                        lastLength = 0;
+                    }
+                    else
+                    {
+                        static_line += 4;
+                    }
                 }
             }       
             if(str == ".data") pastData = true;         
@@ -264,7 +280,7 @@ int main(int argc, char* argv[]) {
         }
         else if(inst_type == "syscall"){
             int lab = 0;
-            write_binary(encode_Jtype(2,lab), inst_outfile);
+            write_binary(encode_Jtype(3,lab), inst_outfile);
         }
         else if(inst_type == "jal"){
             int lab = labels[terms[1]];
