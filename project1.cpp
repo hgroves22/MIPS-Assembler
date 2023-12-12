@@ -23,6 +23,8 @@ int main(int argc, char* argv[]) {
     inst_outfile.open(argv[argc - 1], std::ios::binary);
     std::vector<std::string> instructions;
 
+    std::vector<string> double_bonus_names;
+
     /**
      * Phase 1:
      * Read all instructions, clean them of comments and whitespace DONE
@@ -60,8 +62,20 @@ int main(int argc, char* argv[]) {
             
             if(str.find("$") != string::npos || (str.find("syscall") != string::npos && str.find(":")==string::npos) || (str.find("j")==0 && str.find(":")==string::npos)){   
                 lineCounter++;
-                //pastInstr = true;
+
+                int spaceLocation = str.find(" ");
+                string instr = str.substr(0, spaceLocation);
+                if (std::find(double_bonus_names.begin(), double_bonus_names.end(), instr) != double_bonus_names.end())
+                {   // String found in the vector
+                    lineCounter++;
+                }   
+                else if(instr == "abs")
+                {
+                    lineCounter += 4;
+                }
             }
+            
+            
         }
         infile.close();
     }
@@ -174,8 +188,11 @@ int main(int argc, char* argv[]) {
 
     /** Phase 3
      * Process all instructions, output to instruction memory file
-     * TODO: Almost all of this, it only works for adds
      */
+    
+    {
+        double_bonus_names.push_back("blt"); double_bonus_names.push_back("ble"); double_bonus_names.push_back("bgt"); double_bonus_names.push_back("bge");
+    }
     for(std::string inst : instructions) {
         std::vector<std::string> terms = split(inst, WHITESPACE+",()");
         std::string inst_type = terms[0];
