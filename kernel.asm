@@ -56,6 +56,19 @@ _syscall1:
         j oneEnd
     realOneEnd:
         jr $ra
+    
+#Print String
+_syscall4:
+    #Print String
+    fourLoop:
+        lw $v0, 0($a0)
+        beq $v0, $0, endFour
+        sw $v0, -256($0)
+        addi $a0, $a0, 4
+        j fourLoop:
+    endFour:
+        jr $ra
+
 
 #Read Integer
 _syscall5:
