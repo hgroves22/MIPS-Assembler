@@ -6,6 +6,7 @@ numLabel: .word 1 2 3
 .text
 .globl main
 main:
-    addi $v0, $0, 1
-    addi $a0, $0, 100
+    la $t0 dogLabel
+    addi $a0, $t0, 0
+    addi $v0, $0, 4
     syscall
