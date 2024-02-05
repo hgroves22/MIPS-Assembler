@@ -1,2 +1,2 @@
 # MIPS-Assembler
-Write later
+Start of a MIPS-Assembler project I worked on in my Computer Organization course
