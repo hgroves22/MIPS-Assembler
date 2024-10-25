@@ -9,6 +9,8 @@
 #include <sstream>
 #include <fstream>
 
+using namespace::std;
+
 /**
  * Helper Functions for String Processing
  */
@@ -35,10 +37,12 @@ std::vector<std::string> split(const std::string &s, const std::string &split_on
     while(cur_pos >= 0) {
         int new_pos = s.find_first_not_of(split_on, cur_pos);
         cur_pos = s.find_first_of(split_on, new_pos);
+        if(new_pos == -1 && cur_pos == -1) break; //This line is new
         split_terms.push_back(s.substr(new_pos,cur_pos-new_pos));
     }
     return split_terms;
 }
+
 
 //Remove all comments and leading/trailing whitespace
 std::string clean(const std::string &s)
@@ -64,6 +68,28 @@ void process_instruction(const std::string &instruction);
 //Utility function for encoding an arithmetic "R" type function
 int encode_Rtype(int opcode, int rs, int rt, int rd, int shftamt, int funccode) {
     return (opcode << 26) + (rs << 21) + (rt << 16) + (rd << 11) + (shftamt << 6) + funccode;
+}
+
+int encode_Itype(int opcode, int rs, int rt, int cons){
+    //if(cons > pow(2,15)-1 || cons < -pow(2,15)+1)           //handle out of bounds exceptions 
+    {
+        //cerr << "Illegal constant value (out of bounds)\n";
+        //return -1;
+    } 
+    //else 
+    if (cons < 0) 
+    rt++;                                //offset for negative numbers (prevent creep into rt)
+    return (opcode << 26) + (rs << 21) + (rt << 16) + cons;
+}
+
+int encode_Jtype(int opcode, int lineNumber)
+{
+    if(lineNumber > pow(2,26)-1 || lineNumber < 0)           //handle out of bounds exceptions 
+    {
+        cerr << "Illegal line number value (out of bounds)\n";
+        return -1;
+    } 
+    return (opcode << 26) + lineNumber;
 }
 
 /**
